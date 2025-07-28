@@ -23,26 +23,26 @@ body {
   border-radius: 6px;
 }
 
-
 .calculator {
   flex-direction: column;
 }
 
 .display{
-  width: 406px;
+  width: 400px;
   height: 200px;
   border: 2px solid rgb(116, 29, 29); 
   background-color: rgb(116, 29, 29);
+  border-radius: 6px;
 }
 
 .buttons {
   display: grid;
   width: 400px;
   height: 500px;
-  grid-template-columns: repeat(4,96.89px);
+  grid-template-columns: repeat(4, 1fr);
   gap: 4px;
   border: none;
-  padding: 4px 3px 4px 3px;
+  padding: 4px;
   margin-top: 10px;
 }
 
