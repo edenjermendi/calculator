@@ -60,3 +60,22 @@ operatorButtons.forEach(function (button) {
     updateDisplay(displayInput);
   });
 });
+
+// = button
+
+let equalsButton = document.querySelector('#equals');
+
+equalsButton.addEventListener('click', function () {
+  try {
+    let result = eval(userInput);
+    userInput = result.toString();
+    displayInput = result.toString();
+    updateDisplay(displayInput);
+  } catch (error) {
+    displayInput = "Error";
+    updateDisplay(displayInput);
+  }
+});
+
+
+
