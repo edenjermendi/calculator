@@ -77,5 +77,27 @@ equalsButton.addEventListener('click', function () {
   }
 });
 
+let periodButton = document.querySelector('#period');
+periodButton.addEventListener('click', function () {
+  userInput += '.';
+  displayInput += '.';
+  updateDisplay(displayInput);
+});
+
+let openBracket = document.querySelector('#open-bracket');
+openBracket.addEventListener('click', function () {
+  userInput += '(';
+  displayInput += '(';
+  updateDisplay(displayInput);
+});
+
+let closeBracket = document.querySelector('#closed-bracket');
+closeBracket.addEventListener('click', function () {
+  userInput += ')';
+  displayInput += ')';
+  updateDisplay(displayInput);
+});
+
+
 
 
