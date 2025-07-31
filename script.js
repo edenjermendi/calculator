@@ -2,7 +2,7 @@
 let userInput = "";
 let displayInput = "";
 
-// update display
+// display
 function updateDisplay(input) {
   let displayDiv = document.querySelector('.display');
   displayDiv.textContent = input;
@@ -10,7 +10,7 @@ function updateDisplay(input) {
 
 updateDisplay(displayInput);
 
-// update 0-9 digits
+// 0-9 digits
 let numberButtons = document.querySelectorAll('.number');
 
 numberButtons.forEach(function(button) {
@@ -21,7 +21,7 @@ numberButtons.forEach(function(button) {
   });
 });
 
-// clear display/userInput
+// clear button
 let clearButton = document.querySelector('#clear');
 
 clearButton.addEventListener('click', function () {
@@ -39,7 +39,7 @@ deleteButton.addEventListener('click', function () {
   updateDisplay(displayInput);
 });
 
-// update '+ - x ÷' operators
+// '+ - x ÷' operators
 let operatorButtons = document.querySelectorAll('.operator');
 
 operatorButtons.forEach(function (button) {
@@ -61,7 +61,7 @@ operatorButtons.forEach(function (button) {
   });
 });
 
-// = button
+// '= . ( )' buttons
 
 let equalsButton = document.querySelector('#equals');
 
@@ -98,6 +98,16 @@ closeBracket.addEventListener('click', function () {
   updateDisplay(displayInput);
 });
 
+// '± ! ^ √' buttons
 
+let signButton = document.querySelector('#sign');
+signButton.addEventListener('click', function () {
+  let displayDiv = document.querySelector('.display'); //grab element
+  let currentValue = displayDiv.textContent;  //read what's on screen
+  let newValue = Number(currentValue) * -1;  //convert
+  displayInput = newValue.toString(); // vvv
+  userInput = newValue.toString();  // important to keep BOTH inputs updated
+  updateDisplay(displayInput);
+});
 
 
