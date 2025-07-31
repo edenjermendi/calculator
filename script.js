@@ -2,6 +2,15 @@
 let userInput = "";
 let displayInput = "";
 
+// format result to avoid overflow & round long decimals
+function formatResult(num) {
+  if (!isFinite(num)) return "Error";
+  if (Math.abs(num) > 999999999 || Math.abs(num) < 0.000001) {
+    return Number(num).toExponential(5);
+  }
+  return Number(num).toFixed(8).replace(/\.?0+$/, '');
+}
+
 // display
 function updateDisplay(input) {
   let displayDiv = document.querySelector('.display');
@@ -62,7 +71,6 @@ operatorButtons.forEach(function (button) {
 });
 
 // '^' exponent operator
-
 let exponentButton = document.querySelector('#exponent');
 
 exponentButton.addEventListener('click', function () {
@@ -72,14 +80,14 @@ exponentButton.addEventListener('click', function () {
 });
 
 // '= . ( )' buttons
-
 let equalsButton = document.querySelector('#equals');
 
 equalsButton.addEventListener('click', function () {
   try {
     let result = eval(userInput);
-    userInput = result.toString();
-    displayInput = result.toString();
+    let formatted = formatResult(result);
+    userInput = formatted;
+    displayInput = formatted;
     updateDisplay(displayInput);
   } catch (error) {
     displayInput = "Error";
@@ -109,14 +117,14 @@ closeBracket.addEventListener('click', function () {
 });
 
 // '± ! ^ √' buttons
-
 let signButton = document.querySelector('#sign');
 signButton.addEventListener('click', function () {
-  let displayDiv = document.querySelector('.display'); //grab element
-  let currentValue = displayDiv.textContent;  //read what's on screen
-  let newValue = Number(currentValue) * -1;  //convert
-  displayInput = newValue.toString(); // vvv
-  userInput = newValue.toString();  // important to keep BOTH inputs updated
+  let displayDiv = document.querySelector('.display');
+  let currentValue = displayDiv.textContent;
+  let newValue = Number(currentValue) * -1;
+  let formatted = formatResult(newValue);
+  displayInput = formatted;
+  userInput = formatted;
   updateDisplay(displayInput);
 });
 
@@ -140,8 +148,9 @@ factorialButton.addEventListener('click', function () {
     userInput = "";
   } else {
     let result = factorial(number);
-    displayInput = result.toString();
-    userInput = result.toString();
+    let formatted = formatResult(result);
+    displayInput = formatted;
+    userInput = formatted;
   }
 
   updateDisplay(displayInput);
@@ -159,14 +168,10 @@ squareRootButton.addEventListener('click', function () {
     userInput = "";
   } else {
     let result = Math.sqrt(number);
-    displayInput = result.toString();
-    userInput = result.toString();
+    let formatted = formatResult(result);
+    displayInput = formatted;
+    userInput = formatted;
   }
 
   updateDisplay(displayInput);
 });
-
-
-
-
-
