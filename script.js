@@ -61,6 +61,16 @@ operatorButtons.forEach(function (button) {
   });
 });
 
+// '^' exponent operator
+
+let exponentButton = document.querySelector('#exponent');
+
+exponentButton.addEventListener('click', function () {
+  userInput += '**';
+  displayInput += '^';
+  updateDisplay(displayInput);
+});
+
 // '= . ( )' buttons
 
 let equalsButton = document.querySelector('#equals');
@@ -155,6 +165,7 @@ squareRootButton.addEventListener('click', function () {
 
   updateDisplay(displayInput);
 });
+
 
 
 
