@@ -110,4 +110,34 @@ signButton.addEventListener('click', function () {
   updateDisplay(displayInput);
 });
 
+function factorial(n) {
+  let result = 1;
+  for (let i = n; i > 0; i--) {
+    result *= i;
+  }
+  return result;
+}
+
+let factorialButton = document.querySelector('#factorial');
+
+factorialButton.addEventListener('click', function () {
+  let displayDiv = document.querySelector('.display');
+  let currentValue = displayDiv.textContent;
+  let number = Number(currentValue);
+
+  if (number < 0 || !Number.isInteger(number)) {
+    displayInput = "Error";
+    userInput = "";
+  } else {
+    let result = factorial(number);
+    displayInput = result.toString();
+    userInput = result.toString();
+  }
+
+  updateDisplay(displayInput);
+});
+
+
+
+
 
