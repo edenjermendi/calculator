@@ -137,6 +137,24 @@ factorialButton.addEventListener('click', function () {
   updateDisplay(displayInput);
 });
 
+let squareRootButton = document.querySelector('#square-root');
+
+squareRootButton.addEventListener('click', function () {
+  let displayDiv = document.querySelector('.display');
+  let currentValue = displayDiv.textContent;
+  let number = Number(currentValue);
+
+  if (number < 0) {
+    displayInput = "Error";
+    userInput = "";
+  } else {
+    let result = Math.sqrt(number);
+    displayInput = result.toString();
+    userInput = result.toString();
+  }
+
+  updateDisplay(displayInput);
+});
 
 
 
