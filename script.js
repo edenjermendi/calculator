@@ -1,8 +1,12 @@
-// main inputs
+// ========================
+// VARIABLES
+// ========================
 let userInput = "";
 let displayInput = "";
 
-// format result to avoid overflow & round long decimals
+// ========================
+// UTILITY FUNCTIONS
+// ========================
 function formatResult(num) {
   if (!isFinite(num)) return "Error";
   if (Math.abs(num) > 999999999 || Math.abs(num) < 0.000001) {
@@ -11,18 +15,26 @@ function formatResult(num) {
   return Number(num).toFixed(8).replace(/\.?0+$/, '');
 }
 
-// display
 function updateDisplay(input) {
-  let displayDiv = document.querySelector('.display');
-  displayDiv.textContent = input;
+  document.querySelector('.display').textContent = input;
+}
+
+function operate(a, operator, b) {
+  a = Number(a);
+  b = Number(b);
+  if (operator === "+") return a + b;
+  if (operator === "-") return a - b;
+  if (operator === "*") return a * b;
+  if (operator === "/") return a / b;
+  return "Error";
 }
 
 updateDisplay(displayInput);
 
-// 0-9 digits
-let numberButtons = document.querySelectorAll('.number');
-
-numberButtons.forEach(function(button) {
+// ========================
+// DIGIT BUTTONS (0-9)
+// ========================
+document.querySelectorAll('.number').forEach(function(button) {
   button.addEventListener("click", function () {
     userInput += button.textContent;
     displayInput += button.textContent;
@@ -30,31 +42,27 @@ numberButtons.forEach(function(button) {
   });
 });
 
-// clear button
-let clearButton = document.querySelector('#clear');
-
-clearButton.addEventListener('click', function () {
+// ========================
+// CONTROL BUTTONS
+// ========================
+document.querySelector('#clear').addEventListener('click', function () {
   userInput = "";
   displayInput = "";
   updateDisplay(displayInput);
 });
 
-// delete button
-let deleteButton = document.querySelector('#delete');
-
-deleteButton.addEventListener('click', function () {
+document.querySelector('#delete').addEventListener('click', function () {
   userInput = userInput.slice(0, -1);
   displayInput = displayInput.slice(0, -1);
   updateDisplay(displayInput);
 });
 
-// '+ - x ÷' operators
-let operatorButtons = document.querySelectorAll('.operator');
-
-operatorButtons.forEach(function (button) {
+// ========================
+// OPERATOR BUTTONS (+ - x ÷)
+// ========================
+document.querySelectorAll('.operator').forEach(function (button) {
   button.addEventListener("click", function () {
-    let symbol = button.textContent;
-
+    const symbol = button.textContent;
     if (symbol === "x") {
       userInput += "*";
       displayInput += "x";
@@ -65,113 +73,99 @@ operatorButtons.forEach(function (button) {
       userInput += symbol;
       displayInput += symbol;
     }
-
     updateDisplay(displayInput);
   });
 });
 
-// '^' exponent operator
-let exponentButton = document.querySelector('#exponent');
-
-exponentButton.addEventListener('click', function () {
-  userInput += '**';
-  displayInput += '^';
-  updateDisplay(displayInput);
-});
-
-// '= . ( )' buttons
-let equalsButton = document.querySelector('#equals');
-
-equalsButton.addEventListener('click', function () {
+// ========================
+// EVALUATE BUTTON (=)
+// ========================
+document.querySelector('#equals').addEventListener('click', function () {
   try {
-    let result = eval(userInput);
-    let formatted = formatResult(result);
-    userInput = formatted;
-    displayInput = formatted;
+    if (userInput.includes("+")) {
+      let [a, b] = userInput.split("+");
+      displayInput = formatResult(operate(a, "+", b)).toString();
+    } else if (userInput.includes("-")) {
+      let [a, b] = userInput.split("-");
+      displayInput = formatResult(operate(a, "-", b)).toString();
+    } else if (userInput.includes("*")) {
+      let [a, b] = userInput.split("*");
+      displayInput = formatResult(operate(a, "*", b)).toString();
+    } else if (userInput.includes("/")) {
+      let [a, b] = userInput.split("/");
+      if (Number(b) === 0) {
+        displayInput = "Nice try 😏";
+      } else {
+        displayInput = formatResult(operate(a, "/", b)).toString();
+      }
+    } else {
+      displayInput = "Error";
+    }
+    userInput = displayInput;
     updateDisplay(displayInput);
-  } catch (error) {
+  } catch {
     displayInput = "Error";
     updateDisplay(displayInput);
   }
 });
 
-let periodButton = document.querySelector('#period');
-periodButton.addEventListener('click', function () {
+// ========================
+// SPECIAL CHARACTERS (. () )
+// ========================
+document.querySelector('#period').addEventListener('click', () => {
   userInput += '.';
   displayInput += '.';
   updateDisplay(displayInput);
 });
 
-let openBracket = document.querySelector('#open-bracket');
-openBracket.addEventListener('click', function () {
+document.querySelector('#open-bracket').addEventListener('click', () => {
   userInput += '(';
   displayInput += '(';
   updateDisplay(displayInput);
 });
 
-let closeBracket = document.querySelector('#closed-bracket');
-closeBracket.addEventListener('click', function () {
+document.querySelector('#closed-bracket').addEventListener('click', () => {
   userInput += ')';
   displayInput += ')';
   updateDisplay(displayInput);
 });
 
-// '± ! ^ √' buttons
-let signButton = document.querySelector('#sign');
-signButton.addEventListener('click', function () {
-  let displayDiv = document.querySelector('.display');
-  let currentValue = displayDiv.textContent;
-  let newValue = Number(currentValue) * -1;
-  let formatted = formatResult(newValue);
-  displayInput = formatted;
-  userInput = formatted;
+// ========================
+// ADVANCED BUTTONS (± ! √ ^)
+// ========================
+document.querySelector('#sign').addEventListener('click', () => {
+  let current = Number(document.querySelector('.display').textContent);
+  let newValue = formatResult(current * -1);
+  userInput = displayInput = newValue;
   updateDisplay(displayInput);
 });
 
-function factorial(n) {
-  let result = 1;
-  for (let i = n; i > 0; i--) {
-    result *= i;
-  }
-  return result;
-}
-
-let factorialButton = document.querySelector('#factorial');
-
-factorialButton.addEventListener('click', function () {
-  let displayDiv = document.querySelector('.display');
-  let currentValue = displayDiv.textContent;
-  let number = Number(currentValue);
-
-  if (number < 0 || !Number.isInteger(number)) {
+document.querySelector('#factorial').addEventListener('click', () => {
+  let num = Number(document.querySelector('.display').textContent);
+  if (num < 0 || !Number.isInteger(num)) {
     displayInput = "Error";
     userInput = "";
   } else {
-    let result = factorial(number);
-    let formatted = formatResult(result);
-    displayInput = formatted;
-    userInput = formatted;
+    let result = 1;
+    for (let i = num; i > 0; i--) result *= i;
+    displayInput = userInput = formatResult(result);
   }
-
   updateDisplay(displayInput);
 });
 
-let squareRootButton = document.querySelector('#square-root');
-
-squareRootButton.addEventListener('click', function () {
-  let displayDiv = document.querySelector('.display');
-  let currentValue = displayDiv.textContent;
-  let number = Number(currentValue);
-
-  if (number < 0) {
+document.querySelector('#square-root').addEventListener('click', () => {
+  let num = Number(document.querySelector('.display').textContent);
+  if (num < 0) {
     displayInput = "Error";
     userInput = "";
   } else {
-    let result = Math.sqrt(number);
-    let formatted = formatResult(result);
-    displayInput = formatted;
-    userInput = formatted;
+    displayInput = userInput = formatResult(Math.sqrt(num));
   }
+  updateDisplay(displayInput);
+});
 
+document.querySelector('#exponent').addEventListener('click', () => {
+  userInput += '**';
+  displayInput += '^';
   updateDisplay(displayInput);
 });
