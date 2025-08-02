@@ -4,6 +4,10 @@
 let userInput = "";
 let displayInput = "";
 
+let firstNumber = "";
+let operator = "";
+let waitingForSecond = false;
+
 // ========================
 // UTILITY FUNCTIONS
 // ========================
@@ -36,6 +40,11 @@ updateDisplay(displayInput);
 // ========================
 document.querySelectorAll('.number').forEach(button => {
   button.addEventListener("click", () => {
+    if (waitingForSecond) {
+      userInput = "";
+      displayInput = "";
+      waitingForSecond = false;
+    }
     userInput += button.textContent;
     displayInput += button.textContent;
     updateDisplay(displayInput);
@@ -48,6 +57,9 @@ document.querySelectorAll('.number').forEach(button => {
 document.querySelector('#clear').addEventListener('click', () => {
   userInput = "";
   displayInput = "";
+  firstNumber = "";
+  operator = "";
+  waitingForSecond = false;
   updateDisplay(displayInput);
 });
 
@@ -63,21 +75,22 @@ document.querySelector('#delete').addEventListener('click', () => {
 document.querySelectorAll('.operator').forEach(button => {
   button.addEventListener("click", () => {
     const symbol = button.textContent;
+    const op = symbol === "x" ? "*" : symbol === "÷" ? "/" : symbol;
     const lastChar = userInput.slice(-1);
     if ("+-*/".includes(lastChar)) return;
 
-    if (symbol === "x") {
-      userInput += "*";
-      displayInput += "x";
-    } else if (symbol === "÷") {
-      userInput += "/";
-      displayInput += "÷";
+    if (operator && firstNumber && !waitingForSecond) {
+      let result = formatResult(operate(firstNumber, operator, userInput));
+      firstNumber = result;
+      displayInput = result;
+      updateDisplay(displayInput);
+      userInput = "";
     } else {
-      userInput += symbol;
-      displayInput += symbol;
+      firstNumber = displayInput;
     }
 
-    updateDisplay(displayInput);
+    operator = op;
+    waitingForSecond = true;
   });
 });
 
@@ -85,33 +98,21 @@ document.querySelectorAll('.operator').forEach(button => {
 // EVALUATE BUTTON (=)
 // ========================
 document.querySelector('#equals').addEventListener('click', () => {
-  try {
-    const operators = ["**", "+", "-", "*", "/"];
-    let foundOp = operators.find(op => userInput.includes(op));
-
-    if (foundOp) {
-      let [a, b] = userInput.split(foundOp);
-      if (foundOp === "/") {
-        if (Number(b) === 0) {
-          displayInput = "Nice try 😏";
-        } else {
-          displayInput = formatResult(operate(a, "/", b)).toString();
-        }
-      } else if (foundOp === "**") {
-        displayInput = formatResult(Math.pow(Number(a), Number(b))).toString();
-      } else {
-        displayInput = formatResult(operate(a, foundOp, b)).toString();
-      }
-    } else {
-      displayInput = "Error";
-    }
-
-    userInput = displayInput;
-    updateDisplay(displayInput);
-  } catch {
-    displayInput = "Error";
-    updateDisplay(displayInput);
+  if (!operator || !firstNumber) return;
+  let second = userInput;
+  let result;
+  if (operator === "/" && Number(second) === 0) {
+    result = "Nice try 😏";
+  } else if (operator === "**") {
+    result = formatResult(Math.pow(Number(firstNumber), Number(second)));
+  } else {
+    result = formatResult(operate(firstNumber, operator, second));
   }
+  displayInput = userInput = result;
+  updateDisplay(displayInput);
+  operator = "";
+  waitingForSecond = false;
+  firstNumber = "";
 });
 
 // ========================
@@ -170,7 +171,9 @@ document.querySelector('#square-root').addEventListener('click', () => {
 document.querySelector('#exponent').addEventListener('click', () => {
   const lastChar = userInput.slice(-1);
   if ("+-*/".includes(lastChar)) return;
-  userInput += '**';
-  displayInput += '^';
+  operator = "**";
+  firstNumber = displayInput;
+  userInput = "";
+  displayInput += "^";
   updateDisplay(displayInput);
 });
