@@ -249,6 +249,11 @@ document.addEventListener("keydown", (e) => {
     document.getElementById("equals").click();
   }
 
+   if (key === "Enter" || key === "=") {
+    document.getElementById("equals").click();
+  }
+
+
   // Decimal
   if (key === ".") document.getElementById("period").click();
 
