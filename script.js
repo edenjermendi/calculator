@@ -7,6 +7,7 @@ let displayInput = "";
 let firstNumber = "";
 let operator = "";
 let waitingForSecond = false;
+let resultDisplayed = false;
 
 // ========================
 // UTILITY FUNCTIONS
@@ -40,10 +41,12 @@ updateDisplay(displayInput);
 // ========================
 document.querySelectorAll('.number').forEach(button => {
   button.addEventListener("click", () => {
-    if (waitingForSecond) {
+    if (waitingForSecond || resultDisplayed) {
       userInput = "";
       displayInput = "";
       waitingForSecond = false;
+      resultDisplayed = false;
+      clearActiveOperator();
     }
     userInput += button.textContent;
     displayInput += button.textContent;
@@ -60,6 +63,8 @@ document.querySelector('#clear').addEventListener('click', () => {
   firstNumber = "";
   operator = "";
   waitingForSecond = false;
+  resultDisplayed = false;
+  clearActiveOperator();
   updateDisplay(displayInput);
 });
 
@@ -76,8 +81,14 @@ document.querySelectorAll('.operator').forEach(button => {
   button.addEventListener("click", () => {
     const symbol = button.textContent;
     const op = symbol === "x" ? "*" : symbol === "÷" ? "/" : symbol;
-    const lastChar = userInput.slice(-1);
-    if ("+-*/".includes(lastChar)) return;
+
+    if (!userInput && !firstNumber) return; // don’t allow leading operator
+
+    if (operator && waitingForSecond) {
+      operator = op; // change operator if user clicks again
+      setActiveOperator(button);
+      return;
+    }
 
     if (operator && firstNumber && !waitingForSecond) {
       let result = formatResult(operate(firstNumber, operator, userInput));
@@ -86,11 +97,14 @@ document.querySelectorAll('.operator').forEach(button => {
       updateDisplay(displayInput);
       userInput = "";
     } else {
-      firstNumber = displayInput;
+      firstNumber = displayInput || userInput;
+      userInput = "";
     }
 
     operator = op;
     waitingForSecond = true;
+    resultDisplayed = false;
+    setActiveOperator(button);
   });
 });
 
@@ -98,9 +112,11 @@ document.querySelectorAll('.operator').forEach(button => {
 // EVALUATE BUTTON (=)
 // ========================
 document.querySelector('#equals').addEventListener('click', () => {
-  if (!operator || !firstNumber) return;
+  if (!firstNumber || !operator || !userInput) return;
+
   let second = userInput;
   let result;
+
   if (operator === "/" && Number(second) === 0) {
     result = "Nice try 😏";
   } else if (operator === "**") {
@@ -108,20 +124,26 @@ document.querySelector('#equals').addEventListener('click', () => {
   } else {
     result = formatResult(operate(firstNumber, operator, second));
   }
+
   displayInput = userInput = result;
   updateDisplay(displayInput);
+
   operator = "";
-  waitingForSecond = false;
   firstNumber = "";
+  waitingForSecond = false;
+  resultDisplayed = true;
+  clearActiveOperator();
 });
 
 // ========================
 // SPECIAL CHARACTERS (. () )
 // ========================
 document.querySelector('#period').addEventListener('click', () => {
-  userInput += '.';
-  displayInput += '.';
-  updateDisplay(displayInput);
+  if (!userInput.includes('.')) {
+    userInput += '.';
+    displayInput += '.';
+    updateDisplay(displayInput);
+  }
 });
 
 document.querySelector('#open-bracket').addEventListener('click', () => {
@@ -169,11 +191,25 @@ document.querySelector('#square-root').addEventListener('click', () => {
 });
 
 document.querySelector('#exponent').addEventListener('click', () => {
-  const lastChar = userInput.slice(-1);
-  if ("+-*/".includes(lastChar)) return;
+  if (!userInput) return;
   operator = "**";
-  firstNumber = displayInput;
+  firstNumber = userInput;
   userInput = "";
   displayInput += "^";
   updateDisplay(displayInput);
+  waitingForSecond = true;
 });
+
+// ========================
+// HELPER FUNCTIONS FOR UI
+// ========================
+function setActiveOperator(button) {
+  clearActiveOperator();
+  button.classList.add('active-op');
+}
+
+function clearActiveOperator() {
+  document.querySelectorAll('.operator').forEach(btn => {
+    btn.classList.remove('active-op');
+  });
+}

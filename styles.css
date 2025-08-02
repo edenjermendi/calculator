@@ -81,3 +81,8 @@ button:hover {
 #delete {
   background-color: #ffa5b3;
 }
+
+.active-op {
+  background-color: #ffc107 !important;
+  color: #000 !important;
+}
