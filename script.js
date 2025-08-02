@@ -34,8 +34,8 @@ updateDisplay(displayInput);
 // ========================
 // DIGIT BUTTONS (0-9)
 // ========================
-document.querySelectorAll('.number').forEach(function(button) {
-  button.addEventListener("click", function () {
+document.querySelectorAll('.number').forEach(button => {
+  button.addEventListener("click", () => {
     userInput += button.textContent;
     displayInput += button.textContent;
     updateDisplay(displayInput);
@@ -45,13 +45,13 @@ document.querySelectorAll('.number').forEach(function(button) {
 // ========================
 // CONTROL BUTTONS
 // ========================
-document.querySelector('#clear').addEventListener('click', function () {
+document.querySelector('#clear').addEventListener('click', () => {
   userInput = "";
   displayInput = "";
   updateDisplay(displayInput);
 });
 
-document.querySelector('#delete').addEventListener('click', function () {
+document.querySelector('#delete').addEventListener('click', () => {
   userInput = userInput.slice(0, -1);
   displayInput = displayInput.slice(0, -1);
   updateDisplay(displayInput);
@@ -60,9 +60,12 @@ document.querySelector('#delete').addEventListener('click', function () {
 // ========================
 // OPERATOR BUTTONS (+ - x ÷)
 // ========================
-document.querySelectorAll('.operator').forEach(function (button) {
-  button.addEventListener("click", function () {
+document.querySelectorAll('.operator').forEach(button => {
+  button.addEventListener("click", () => {
     const symbol = button.textContent;
+    const lastChar = userInput.slice(-1);
+    if ("+-*/".includes(lastChar)) return;
+
     if (symbol === "x") {
       userInput += "*";
       displayInput += "x";
@@ -73,6 +76,7 @@ document.querySelectorAll('.operator').forEach(function (button) {
       userInput += symbol;
       displayInput += symbol;
     }
+
     updateDisplay(displayInput);
   });
 });
@@ -80,27 +84,28 @@ document.querySelectorAll('.operator').forEach(function (button) {
 // ========================
 // EVALUATE BUTTON (=)
 // ========================
-document.querySelector('#equals').addEventListener('click', function () {
+document.querySelector('#equals').addEventListener('click', () => {
   try {
-    if (userInput.includes("+")) {
-      let [a, b] = userInput.split("+");
-      displayInput = formatResult(operate(a, "+", b)).toString();
-    } else if (userInput.includes("-")) {
-      let [a, b] = userInput.split("-");
-      displayInput = formatResult(operate(a, "-", b)).toString();
-    } else if (userInput.includes("*")) {
-      let [a, b] = userInput.split("*");
-      displayInput = formatResult(operate(a, "*", b)).toString();
-    } else if (userInput.includes("/")) {
-      let [a, b] = userInput.split("/");
-      if (Number(b) === 0) {
-        displayInput = "Nice try 😏";
+    const operators = ["**", "+", "-", "*", "/"];
+    let foundOp = operators.find(op => userInput.includes(op));
+
+    if (foundOp) {
+      let [a, b] = userInput.split(foundOp);
+      if (foundOp === "/") {
+        if (Number(b) === 0) {
+          displayInput = "Nice try 😏";
+        } else {
+          displayInput = formatResult(operate(a, "/", b)).toString();
+        }
+      } else if (foundOp === "**") {
+        displayInput = formatResult(Math.pow(Number(a), Number(b))).toString();
       } else {
-        displayInput = formatResult(operate(a, "/", b)).toString();
+        displayInput = formatResult(operate(a, foundOp, b)).toString();
       }
     } else {
       displayInput = "Error";
     }
+
     userInput = displayInput;
     updateDisplay(displayInput);
   } catch {
@@ -119,14 +124,12 @@ document.querySelector('#period').addEventListener('click', () => {
 });
 
 document.querySelector('#open-bracket').addEventListener('click', () => {
-  userInput += '(';
-  displayInput += '(';
+  displayInput = "Brackets unsupported";
   updateDisplay(displayInput);
 });
 
 document.querySelector('#closed-bracket').addEventListener('click', () => {
-  userInput += ')';
-  displayInput += ')';
+  displayInput = "Brackets unsupported";
   updateDisplay(displayInput);
 });
 
@@ -165,6 +168,8 @@ document.querySelector('#square-root').addEventListener('click', () => {
 });
 
 document.querySelector('#exponent').addEventListener('click', () => {
+  const lastChar = userInput.slice(-1);
+  if ("+-*/".includes(lastChar)) return;
   userInput += '**';
   displayInput += '^';
   updateDisplay(displayInput);
