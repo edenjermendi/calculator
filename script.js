@@ -66,6 +66,9 @@ document.querySelector('#clear').addEventListener('click', () => {
   resultDisplayed = false;
   clearActiveOperator();
   updateDisplay(displayInput);
+  if (displayInput.includes("^")) {
+    displayInput = "";
+  }
 });
 
 document.querySelector('#delete').addEventListener('click', () => {
@@ -222,3 +225,38 @@ function clearActiveOperator() {
     btn.classList.remove('active-op');
   });
 }
+
+// ========================
+// KEYBOARD SUPPORT
+// ========================
+
+document.addEventListener("keydown", (e) => {
+  const key = e.key;
+
+  // Digits
+  if (!isNaN(key)) {
+    document.getElementById(key).click();
+  }
+
+  // Operators
+  if (key === "+") document.getElementById("add").click();
+  if (key === "-") document.getElementById("subtract").click();
+  if (key === "*" || key === "x") document.getElementById("multiply").click();
+  if (key === "/" || key === "÷") document.getElementById("divide").click();
+
+  // Equals / Enter
+  if (key === "=" || key === "Enter") {
+    document.getElementById("equals").click();
+  }
+
+  // Decimal
+  if (key === ".") document.getElementById("period").click();
+
+  // Delete
+  if (key === "Backspace") document.getElementById("delete").click();
+
+  // Clear
+  if (key === "Escape" || key.toLowerCase() === "c") {
+    document.getElementById("clear").click();
+  }
+});
