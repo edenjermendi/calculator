@@ -159,33 +159,41 @@ document.querySelector('#closed-bracket').addEventListener('click', () => {
 // ========================
 // ADVANCED BUTTONS (± ! √ ^)
 // ========================
+// SIGN TOGGLE (±)
 document.querySelector('#sign').addEventListener('click', () => {
-  let current = Number(document.querySelector('.display').textContent);
-  let newValue = formatResult(current * -1);
-  userInput = displayInput = newValue;
+  if (!userInput) return;
+  let current = Number(userInput);
+  userInput = formatResult(current * -1);
+  displayInput = userInput;
   updateDisplay(displayInput);
 });
 
+// FACTORIAL (!)
 document.querySelector('#factorial').addEventListener('click', () => {
-  let num = Number(document.querySelector('.display').textContent);
+  if (!userInput) return;
+  let num = Number(userInput);
   if (num < 0 || !Number.isInteger(num)) {
     displayInput = "Error";
     userInput = "";
   } else {
     let result = 1;
     for (let i = num; i > 0; i--) result *= i;
-    displayInput = userInput = formatResult(result);
+    userInput = formatResult(result);
+    displayInput = userInput;
   }
   updateDisplay(displayInput);
 });
 
+// SQUARE ROOT (√)
 document.querySelector('#square-root').addEventListener('click', () => {
-  let num = Number(document.querySelector('.display').textContent);
+  if (!userInput) return;
+  let num = Number(userInput);
   if (num < 0) {
     displayInput = "Error";
     userInput = "";
   } else {
-    displayInput = userInput = formatResult(Math.sqrt(num));
+    userInput = formatResult(Math.sqrt(num));
+    displayInput = userInput;
   }
   updateDisplay(displayInput);
 });
