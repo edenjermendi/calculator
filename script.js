@@ -90,16 +90,17 @@ document.querySelectorAll('.operator').forEach(button => {
       return;
     }
 
-    if (operator && firstNumber && !waitingForSecond) {
-      let result = formatResult(operate(firstNumber, operator, userInput));
+    if (firstNumber && operator && userInput && !waitingForSecond) {
+      const result = formatResult(operate(firstNumber, operator, userInput));
       firstNumber = result;
       displayInput = result;
       updateDisplay(displayInput);
       userInput = "";
-    } else {
-      firstNumber = displayInput || userInput;
+    } else if (!firstNumber && userInput) {
+      firstNumber = userInput;
       userInput = "";
     }
+
 
     operator = op;
     waitingForSecond = true;
